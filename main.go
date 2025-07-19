@@ -6,11 +6,21 @@ import (
 	"strconv"
 )
 
+// Constants for Main package
+
 const fileExt = ".html"
+
+// Structs for Main package
 
 type fileDetails struct {
 	fileName      string
 	numberOfFiles int
+}
+
+type details struct {
+	users    []string
+	mobiles  []string
+	channels []string
 }
 
 func main() {
@@ -20,6 +30,7 @@ func main() {
 	// Likely also move the swtich statement to a clean file and call form the main
 
 	files := &fileDetails{}
+	dt := &details{}
 
 	switch len(os.Args) {
 	case 1:
@@ -68,8 +79,16 @@ func main() {
 
 	target := files.createFileName()
 	for i := range target {
-		resp := parseHTML(target[i])
-		fmt.Printf("Resp: %v\n", resp)
+		resp, err := openHTML(target[i])
+		if err != nil {
+			fmt.Println("Error getting html string")
+			return
+		}
+		//fmt.Printf("Resp: %v\n", resp)
+		dt.GetDetailsFromHTML(resp)
 	}
 
+	fmt.Printf("Users: %v", dt.users)
+	fmt.Printf("Numbers: %v", dt.mobiles)
+	fmt.Printf("Channels: %v", dt.channels)
 }

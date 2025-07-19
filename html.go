@@ -10,23 +10,20 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+// create a empty details struct to pass around for use
+
 // This needs to pass to the GetDetails function below
 
-func parseHTML(file string) (string, error) {
+func openHTML(file string) (string, error) {
 
-	file, err := os.Open(file) // For read access.
+	html, err := os.ReadFile(file) // Reads the whole file and loads to mem
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error opening file")
+		return "", err
 	}
 
-	data := make([]byte, 100)
-	count, err := file.Read(data)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return string(html), nil
 
-	fmt.Printf("read %d bytes: %q\n", count, data[:count])
-	return count, nil
 }
 
 // Example GetHTML
@@ -58,7 +55,7 @@ func GetHTML(rawURL string) (string, error) {
 
 // New reader function for the HTML
 
-func GetDetailsFromHTML(htmlBody string) ([]string, error) {
+func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 
 	// get the URL's from the HTML here
 
@@ -83,10 +80,6 @@ func GetDetailsFromHTML(htmlBody string) ([]string, error) {
 	//	return nil, err
 	//}
 
-	users := []string{}
-	mobiles := []string{}
-	channels := []string{}
-
 	htmmlReader := strings.NewReader(htmlBody)
 	nodeTree, err := html.Parse(htmmlReader)
 	if err != nil {
@@ -100,16 +93,16 @@ func GetDetailsFromHTML(htmlBody string) ([]string, error) {
 				if a.Key == "from_name" {
 					// Check if a.Val has a suffix here
 					if strings.HasPrefix(a.Val, "+61") {
-						mobiles = append(mobiles, strings.TrimSpace(a.Val))
+						dt.mobiles = append(dt.mobiles, strings.TrimSpace(a.Val))
 						break
 					} else {
-						users = append(users, a.Val)
+						dt.users = append(dt.users, a.Val)
 						break
 					}
 				} else if a.Key == "text" {
 					// checks for a channel, at the moment it will append the whole text string
 					if strings.Contains(a.Val, "https://t.me/") {
-						channels = append(channels, a.Val)
+						dt.channels = append(dt.channels, a.Val)
 					}
 				}
 			}
@@ -118,6 +111,6 @@ func GetDetailsFromHTML(htmlBody string) ([]string, error) {
 
 	// Probably better the change this return to a struct
 	// Then it will only be one return
-	return links, nil
+	return nil
 
 }
