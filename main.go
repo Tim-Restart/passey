@@ -66,4 +66,10 @@ func main() {
 	hosp := files.createFileName()
 	fmt.Println(hosp)
 
+	target := files.createFileName()
+	for i := range target {
+		resp := parseHTML(target[i])
+		fmt.Printf("Resp: %v\n", resp)
+	}
+
 }

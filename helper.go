@@ -8,10 +8,10 @@ import (
 func (files *fileDetails) testPrint() {
 	fmt.Printf(`
 ===================================
-File name to be searched: %v
+File name to be searched: %v%v
 Number of files to be searched: %v
 ===================================
-	`, files.fileName, files.numberOfFiles)
+	`, files.fileName, fileExt, files.numberOfFiles)
 }
 
 func (files *fileDetails) createFileName() []string {
