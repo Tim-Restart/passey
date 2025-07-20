@@ -21,6 +21,7 @@ type details struct {
 	users    []string
 	mobiles  []string
 	channels []string
+	links    []string
 }
 
 func main() {
@@ -98,7 +99,9 @@ func main() {
 	checkUsers := len(dt.users)
 	checkMobiles := len(dt.mobiles)
 	checkChannels := len(dt.channels)
+	checkLinks := len(dt.links)
 	fmt.Printf("Users: %v\n", checkUsers)
 	fmt.Printf("Numbers: %v\n", checkMobiles)
 	fmt.Printf("Channels: %v\n", checkChannels)
+	fmt.Printf("Links: %v\n", checkLinks)
 }
