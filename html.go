@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
 
 // create a empty details struct to pass around for use
@@ -30,18 +29,23 @@ func openHTML(file string) (string, error) {
 /*
 func GetHTML(rawURL string) (string, error) {
 
-	res, err := http.Get(rawURL)
-	if err != nil {
-		return "", err
-	}
+
+		res, err := http.Get(rawURL)
+		if err != nil {
+			fmt.Println("Tried to read the rawURL and failed here")
+			return "", err
+		}
+
+
 	body, err := io.ReadAll(res.Body)
 	defer res.Body.Close()
+	fmt.Printf("Body read successfully: %v", body)
 	if res.StatusCode > 399 {
 		fmt.Printf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
 		return "", err
 	}
-	if !strings.HasPrefix(res.Header.Get("Content-Type"), "text/html") {
-		err = fmt.Errorf("Header not text/html")
+	if !strings.HasPrefix(res.Header.Get("Content-Type"), "text/javascript") {
+		err = fmt.Errorf("Header not text/javascript")
 		return "", err
 	}
 	if err != nil {
@@ -88,12 +92,21 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 	}
 
 	for n := range nodeTree.Descendants() {
-		if n.Type == html.ElementNode && n.DataAtom == atom.A {
+		if n.Type == html.ElementNode && n.Data == "div" {
 			for _, a := range n.Attr {
-				if a.Key == "from_name" {
+				//fmt.Println(a.Key)
+				if a.Key == "class" {
 					// Check if a.Val has a suffix here
-					if strings.HasPrefix(a.Val, "+61") {
-						dt.mobiles = append(dt.mobiles, strings.TrimSpace(a.Val))
+					//fmt.Printf("a key: %v\na.Val: %v\n", a.Key, a.Val)
+					if strings.HasPrefix(a.Val, "from_name") {
+						for _, k := range a.Val {
+							if strings.HasPrefix(string(k), "+61") {
+								fmt.Printf("This is the k: %v", k)
+								dt.mobiles = append(dt.mobiles, strings.TrimSpace(a.Val))
+							}
+							break
+						}
+
 						break
 					} else {
 						dt.users = append(dt.users, a.Val)

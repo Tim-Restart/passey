@@ -85,10 +85,20 @@ func main() {
 			return
 		}
 		//fmt.Printf("Resp: %v\n", resp)
+		/* I don't think this part is actually needed - as no Get call is required
+		htmlBody, err := GetHTML(resp)
+		if err != nil {
+			fmt.Println("Error doing HTML parsing")
+			fmt.Println(err)
+		}
+		*/
+
 		dt.GetDetailsFromHTML(resp)
 	}
-
-	fmt.Printf("Users: %v", dt.users)
-	fmt.Printf("Numbers: %v", dt.mobiles)
-	fmt.Printf("Channels: %v", dt.channels)
+	checkUsers := len(dt.users)
+	checkMobiles := len(dt.mobiles)
+	checkChannels := len(dt.channels)
+	fmt.Printf("Users: %v\n", checkUsers)
+	fmt.Printf("Numbers: %v\n", checkMobiles)
+	fmt.Printf("Channels: %v\n", checkChannels)
 }
