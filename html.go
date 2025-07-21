@@ -8,9 +8,8 @@ import (
 	"strings"
 
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
-
-// create a empty details struct to pass around for use
 
 // This needs to pass to the GetDetails function below
 
@@ -57,8 +56,8 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 
 			//fmt.Printf("n.Data: %v\n", n.Data)
 			for _, a := range n.Attr {
-				// First check is for mobile numbers only
-				// This could be converted to usernames also
+				// First check is for mobile numbers and usernames
+
 				if a.Key == "class" && a.Val == "from_name" {
 					if strings.Contains(n.FirstChild.Data, "+61") {
 						//fmt.Printf("Mobiles: %v\n", n.FirstChild.Data)
@@ -85,9 +84,9 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 					}
 
 				} else if a.Key == "class" && a.Val == "text" {
-					//fmt.Println("++++++========== Text contains user ===========")
+
 					if strings.Contains(n.FirstChild.Data, "https://t.me") {
-						//fmt.Println("++++++========== append channels ===========")
+
 						dt.channels = append(dt.channels, n.FirstChild.Data)
 					} else if strings.Contains(n.FirstChild.Data, "https://") {
 						dt.links = append(dt.links, n.FirstChild.Data)
@@ -97,8 +96,26 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 				}
 
 			}
+		} else if n.Type == html.ElementNode && n.DataAtom == atom.A {
+			for _, a := range n.Attr {
+				if a.Key == "href" {
+					// Check if a.Val has a suffix here
+					if strings.HasPrefix(a.Val, "http://t.me") {
+						if slices.Contains(dt.channels, a.Val) {
+							break
+						} else {
+							dt.channels = append(dt.channels, strings.TrimSpace(a.Val))
+						}
+					} else if strings.HasPrefix(a.Val, "http://") {
+						if slices.Contains(dt.links, a.Val) {
+							break
+						} else {
+							dt.links = append(dt.links, strings.TrimSpace(a.Val))
+						}
+					}
+				}
+			}
 		}
-
 	}
 	return nil
 }
