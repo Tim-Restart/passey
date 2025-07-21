@@ -104,4 +104,18 @@ func main() {
 	fmt.Printf("Numbers: %v\n", checkMobiles)
 	fmt.Printf("Channels: %v\n", checkChannels)
 	fmt.Printf("Links: %v\n", checkLinks)
+	for i, userN := range dt.users {
+		fmt.Printf("User[%v]: %v\n", i, userN)
+	}
+	for i, mob := range dt.mobiles {
+		fmt.Printf("Mobile[%v]: %v\n", i, mob)
+	}
+	for i, channels := range dt.channels {
+		fmt.Printf("User[%v]: %v\n", i, channels)
+	}
+	for i, userLinks := range dt.links {
+		fmt.Printf("User[%v]: %v\n", i, userLinks)
+	}
+
+	fmt.Println("===== Report Complete =====")
 }

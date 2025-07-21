@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -50,7 +51,7 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 		fmt.Println("Error parsing HTML data to nodes")
 		log.Fatal(err)
 	}
-	fmt.Println("Entering soughting mode")
+	//fmt.Println("Entering soughting mode")
 	for n := range nodeTree.Descendants() {
 		if n.Type == html.ElementNode && n.Data == "div" {
 
@@ -60,29 +61,44 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 				// This could be converted to usernames also
 				if a.Key == "class" && a.Val == "from_name" {
 					if strings.Contains(n.FirstChild.Data, "+61") {
-						fmt.Printf("Mobiles: %v\n", n.FirstChild.Data)
+						//fmt.Printf("Mobiles: %v\n", n.FirstChild.Data)
 						// Need to add a check for exists
-						dt.mobiles = append(dt.mobiles, a.Val)
+						if slices.Contains(dt.mobiles, n.FirstChild.Data) {
+							//fmt.Println("Slice contains number!")
+							break
+						} else {
+							dt.mobiles = append(dt.mobiles, n.FirstChild.Data)
+						}
+						// Checks for username - deleted it just ignores
 					} else if !strings.Contains(n.FirstChild.Data, "Deleted Account") {
-						fmt.Printf("Users: %v\n", n.FirstChild.Data)
+
+						//fmt.Printf("Entered not deleted check\n")
 						// Checks to see if it exists
-						if _, exists := dt.users[n.FirstChild.Data] {
+						if slices.Contains(dt.users, n.FirstChild.Data) {
+
 							break
 						} else {
 							dt.users = append(dt.users, n.FirstChild.Data)
+							break
 						}
-
+						// End user and mobile check
 					}
+
 				} else if a.Key == "class" && a.Val == "text" {
-					if strings.Contains(n.FirstChild.Data, "https://") {
+					//fmt.Println("++++++========== Text contains user ===========")
+					if strings.Contains(n.FirstChild.Data, "https://t.me") {
+						//fmt.Println("++++++========== append channels ===========")
 						dt.channels = append(dt.channels, n.FirstChild.Data)
+					} else if strings.Contains(n.FirstChild.Data, "https://") {
+						dt.links = append(dt.links, n.FirstChild.Data)
+					} else {
+						break
 					}
-
 				}
-				break
-			}
 
+			}
 		}
+
 	}
 	return nil
 }
