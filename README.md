@@ -5,6 +5,7 @@ Passey is a command line tool used to parse data from downloaded telegram chat b
 
 #### Windows:
 1. Download and install go // <https://go.dev/dl/>
+2. Not yet tested the rest...
 
 #### Linux:
 1. Download and install go // <https://go.dev/dl/>
