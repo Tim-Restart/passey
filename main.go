@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // Constants for Main package
@@ -39,7 +40,12 @@ func main() {
 		os.Exit(1)
 	case 2:
 		fmt.Printf("starting Parse of: %v\n", os.Args[1])
-		files.fileName = os.Args[1]
+		before, found := strings.CutSuffix(os.Args[1], ".html")
+		if !found {
+			files.fileName = os.Args[1]
+		} else {
+			files.fileName = before
+		}
 		fmt.Printf("Single file being parsed: %v%v", files.fileName, fileExt)
 	case 3:
 		fmt.Printf("starting crawl of: %v\n", os.Args[1])
@@ -116,6 +122,10 @@ func main() {
 	for i, userLinks := range dt.links {
 		fmt.Printf("User[%v]: %v\n", i, userLinks)
 	}
-
+	err := dt.reportHTML()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println("===== Report Complete =====")
 }
