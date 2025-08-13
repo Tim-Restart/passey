@@ -25,6 +25,45 @@ func openHTML(file string) (string, error) {
 
 }
 
+// adding phone locating and email?
+
+func (dt *details) emailPhone(n *html.Node, emailRegex, phoneRegex *regexp.Regexp) {
+	if n.Type == html.TextNode {
+		text := strings.TrimSpace(n.Data)
+		if len(text) > 0 {
+			emails := emailRegex.FindAllString(text, -1)
+			phones := phoneRegex.FindAllString(text, -1)
+			for _, e := range emails {
+				//fmt.Println("Found Email:", e)
+				cfg.addToEmail(e)
+			}
+			for _, p := range phones {
+				//fmt.Println("Found phone:", p)
+				cfg.addToPhone(p)
+			}
+		}
+	}
+	// Added check for html.ElementNodes also
+	if n.Type == html.ElementNode {
+		for _, attr := range n.Attr {
+			// Check if attribute value contains emails/phones (like href="mailto:...")
+			attrValue := strings.TrimSpace(attr.Val)
+			emails := emailRegex.FindAllString(attrValue, -1)
+			phones := phoneRegex.FindAllString(attrValue, -1)
+			for _, e := range emails {
+
+				cfg.addToEmail(e)
+			}
+			for _, p := range phones {
+				cfg.addToPhone(p)
+			}
+		}
+	}
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		cfg.emailPhone(c, emailRegex, phoneRegex)
+	}
+}
+
 // New reader function for the HTML
 
 func (dt *details) GetDetailsFromHTML(htmlBody string) error {
