@@ -23,6 +23,7 @@ type details struct {
 	mobiles  []string
 	channels []string
 	links    []string
+	emails	 []string
 }
 
 func main() {
@@ -106,10 +107,12 @@ func main() {
 	checkMobiles := len(dt.mobiles)
 	checkChannels := len(dt.channels)
 	checkLinks := len(dt.links)
+	checkEmails := len(dt.email)
 	fmt.Printf("Users: %v\n", checkUsers)
 	fmt.Printf("Numbers: %v\n", checkMobiles)
 	fmt.Printf("Channels: %v\n", checkChannels)
 	fmt.Printf("Links: %v\n", checkLinks)
+	fmt.Printf("Emails: %v\n", checkEmails)
 	for i, userN := range dt.users {
 		fmt.Printf("User[%v]: %v\n", i, userN)
 	}
@@ -120,7 +123,10 @@ func main() {
 		fmt.Printf("User[%v]: %v\n", i, channels)
 	}
 	for i, userLinks := range dt.links {
-		fmt.Printf("User[%v]: %v\n", i, userLinks)
+		fmt.Printf("Links[%v]: %v\n", i, userLinks)
+	}
+	for i, email := range dt.email {
+		fmt.Printf("Email[%v]: %v\n", i, email)
 	}
 	err := dt.reportHTML()
 	if err != nil {
