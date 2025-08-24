@@ -56,11 +56,11 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 		fmt.Println("Error parsing HTML data to nodes")
 		log.Fatal(err)
 	}
-	//fmt.Println("Entering soughting mode")
+
 	for n := range nodeTree.Descendants() {
 		if n.Type == html.ElementNode && n.Data == "div" {
 
-			//fmt.Printf("n.Data: %v\n", n.Data)
+
 			for _, a := range n.Attr {
 				// First check is for mobile numbers and usernames
 
@@ -104,6 +104,8 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 			}
 		}
 		// Email and phones regex checks
+		// Uses the regex expressions stated at the start
+		// Checks html.Text nodes for the presence of these regex
 
 		if n.Type == html.TextNode {
 		text := strings.TrimSpace(n.Data)
@@ -147,9 +149,4 @@ func (dt *details) GetDetailsFromHTML(htmlBody string) error {
 	return nil
 }
 
-// adding phone locating and email?
 
-func (dt *details) emailPhone(n *html.Node, emailRegex, phoneRegex *regexp.Regexp) {
-	
-	
-}
